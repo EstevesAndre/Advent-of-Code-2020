@@ -11,9 +11,7 @@ for (let i = 0; i < input.length; i++) {
     let f = spliter[1].trim()[numbers[0] - 1] == char;
     let l = spliter[1].trim()[numbers[1] - 1] == char;
 
-
-    if (f != l && (f || l))
-        count++;
+    count += f ^ l;
 }
 
 console.log(count);
