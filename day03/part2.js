@@ -25,4 +25,4 @@ slopes.forEach(slope => {
     trees.push(getFoundTrees(slope[0], slope[1]));
 });
 
-console.log(trees, trees.reduce((a, b) => a * b));
+console.log(trees, "*=", trees.reduce((a, b) => a * b));
