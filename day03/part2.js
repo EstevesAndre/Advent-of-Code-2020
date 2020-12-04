@@ -5,13 +5,14 @@ const getFoundTrees = (slopeR, slopeD) => {
     var counter = 0;
 
     for (let i = slopeD; i < input.length; i += slopeD) {
+        const inS = input[i].trim();
         index += slopeR;
 
-        if (index >= input[i].length - 2) {
-            index %= input[i].length - 1;
+        if (index >= inS.length - 1) {
+            index %= inS.length;
         }
 
-        counter += (input[i][index] == '#' ? 1 : 0);
+        counter += (inS[index] == '#' ? 1 : 0);
     }
 
     return counter;
