@@ -11,4 +11,12 @@ for (let i = 0; i < input.length; i++) {
     highest = highest > seat ? highest : seat;
 }
 
-console.log(highest);
+// OR (simplified)
+var max = 0;
+
+for (line of input) {
+    const seatId = parseInt(line.replace(/F|L/g, 0).replace(/B|R/g, 1), 2);
+    max = seatId > max ? seatId : max;
+}
+
+console.log(highest, max);
