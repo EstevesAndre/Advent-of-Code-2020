@@ -2,6 +2,7 @@ const input = require('../filereader.js').readFile('\n', false);
 
 const requestedBag = "shiny gold";
 var rules = new Map();
+var cache = new Map();
 
 input.forEach(rule => {
     const splited = rule.split(" bags contain");
@@ -15,9 +16,14 @@ input.forEach(rule => {
 })
 
 const getAmount = (bag) => {
+    if (cache.has(bag))
+        return cache.get(bag);
+
     if (!rules.has(bag) || rules.get(bag).size == 0) return 1;
+
     // Hmm, okay x)
     const amount = rules.get(bag).map(elem => getAmount(elem[0]) * elem[1]).reduce((a, b) => a + b, 0);
+    cache.set(bag, amount + 1);
     return amount + 1;
 }
 
