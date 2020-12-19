@@ -50,10 +50,42 @@ const dfs = (i) => {
 }
 
 var cache = new Map()
-validMessages = dfs(0)
 
-console.log(
-  messages
-    .map((m) => (validMessages.includes(m) ? 1 : 0))
-    .reduce((a, b) => a + b)
-)
+console.time('Time')
+validMessages = dfs(0)
+const res = messages.filter((m) => validMessages.includes(m)).length
+console.timeEnd('Time')
+
+console.log('Solution 1 (dfs):', res)
+
+// Code enhancement (REGEX)
+cache.clear()
+
+const regex = (i) => {
+  if (cache.has(i)) return cache.get(i)
+
+  const ors = []
+  var ret = ''
+
+  for (const rule of rules.get(i)) {
+    var re = ''
+    for (const child of rule) {
+      re += Number.isInteger(child) ? regex(child) : child
+    }
+    ors.push(re)
+  }
+
+  ret = ors.length == 1 ? ors[0] : `(?:${ors.join('|')})`
+
+  cache.set(i, ret)
+
+  return ret
+}
+
+console.time('Time')
+const rexText = regex(0)
+const rex = new RegExp(`^${rexText}$`, 'u')
+const ret = messages.filter((m) => rex.test(m)).length
+console.timeEnd('Time')
+
+console.log('Solution 2 (regex):', ret)
