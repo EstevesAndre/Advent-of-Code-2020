@@ -1,52 +1,38 @@
+const neighbors = {
+  se: [1, 2],
+  sw: [-1, 2],
+  nw: [-1, -2],
+  ne: [1, -2],
+  e: [2, 0],
+  w: [-2, 0],
+}
+
 const input = require('../filereader.js')
   .readFile('\n', false)
-  .map((m) => m.trimEnd())
+  .map((line) =>
+    line
+      .match(/(se|sw|nw|ne|e|w)/g)
+      .map((v) => neighbors[v])
+      .reduce((a, b) => [a[0] + b[0], a[1] + b[1]])
+  )
 
 const hexs = new Map()
-
-const moves = new Map([
-  ['se', [1, 2]],
-  ['sw', [-1, 2]],
-  ['nw', [-1, -2]],
-  ['ne', [1, -2]],
-  ['e', [2, 0]],
-  ['w', [-2, 0]],
-])
-
-input.forEach((line) => {
-  var ref = line,
-    c = '0',
-    x = 0,
-    y = 0
-
-  for ([dir, to] of moves.entries()) {
-    ref = ref.replace(new RegExp(dir, 'g'), c)
-    var count = (ref.match(new RegExp(c, 'g')) || []).length
-
-    x += to[0] * count
-    y += to[1] * count
-
-    c = String(parseInt(c) + 1)
-  }
-
-  const key = x + ',' + y
-
-  if (hexs.has(key)) hexs.set(key, !hexs.get(key))
-  else hexs.set(key, true)
-})
 
 var varX = [0, 0]
 var varY = [0, 0]
 
-for (const key of hexs.keys()) {
-  const [x, y] = key.split(',').map(Number)
+input.forEach((pos) => {
+  const key = pos.join()
 
-  if (x < varX[0]) varX[0] = x
-  else if (x > varX[1]) varX[1] = x
+  if (hexs.has(key)) hexs.set(key, !hexs.get(key))
+  else hexs.set(key, true)
 
-  if (y < varY[0]) varY[0] = y
-  else if (y > varY[1]) varY[1] = y
-}
+  if (pos[0] < varX[0]) varX[0] = pos[0]
+  else if (pos[0] > varX[1]) varX[1] = pos[0]
+
+  if (pos[1] < varY[0]) varY[0] = pos[1]
+  else if (pos[1] > varY[1]) varY[1] = pos[1]
+})
 
 varX[0] -= 2
 varY[0] -= 2
@@ -55,7 +41,7 @@ varY[1] += 2
 
 const getAdjBCount = (hexs, x, y) => {
   var ret = 0
-  for (const [xx, yy] of moves.values()) {
+  for (const [xx, yy] of Object.values(neighbors)) {
     if (hexs.get(x + xx + ',' + (y + yy))) ret++
   }
   return ret
@@ -75,23 +61,21 @@ while (day < 100) {
         if (adjC !== 1 && adjC !== 2) {
           hexs.set(x + ',' + y, false)
         }
-      } else {
-        if (adjC === 2) {
-          hexs.set(x + ',' + y, true)
+      } else if (adjC === 2) {
+        hexs.set(x + ',' + y, true)
 
-          if (x % 2 === 0) {
-            if (newVarX[0] === x) newVarX[0] = newVarX[0] - 2
-            else if (newVarX[1] === x) newVarX[1] = newVarX[1] + 2
-          } else {
-            if (newVarX[0] === x - 1) newVarX[0] = newVarX[0] - 2
-            else if (newVarX[1] === x - 1) newVarX[1] = newVarX[1] + 2
-          }
+        if (x % 2 === 0) {
+          if (newVarX[0] === x) newVarX[0] = newVarX[0] - 2
+          else if (newVarX[1] === x) newVarX[1] = newVarX[1] + 2
+        } else {
+          if (newVarX[0] === x - 1) newVarX[0] = newVarX[0] - 2
+          else if (newVarX[1] === x - 1) newVarX[1] = newVarX[1] + 2
+        }
 
-          if (newVarY[0] === y) {
-            newVarY[0] = y - 2
-          } else if (newVarY[1] === y) {
-            newVarY[1] = y + 2
-          }
+        if (newVarY[0] === y) {
+          newVarY[0] = y - 2
+        } else if (newVarY[1] === y) {
+          newVarY[1] = y + 2
         }
       }
     }
